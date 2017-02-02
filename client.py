@@ -7,7 +7,16 @@
 # ------------------------------------
 
 import os
+import sys
 import requests
+
+try:
+    baseurl = sys.argv[1]
+    apikey = sys.argv[2]
+except Exception:
+    print("Need two arguments, first is base URL for server and second is API key")
+    sys.exit(-1)
+    raise
 
 def reg_login(authkey, user, machine, addr):
     data = {
@@ -16,9 +25,8 @@ def reg_login(authkey, user, machine, addr):
         'address' : addr,
         'authkey' : authkey
     }
-    response = requests.post('http://localhost:5000/hello', data)
+    response = requests.post(baseurl + '/hello', data)
 
-apikey = os.environ.get('ROAD_API_KEY', '')
 
 if __name__ == '__main__':
     # Register a login
