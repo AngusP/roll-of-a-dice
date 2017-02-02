@@ -22,5 +22,7 @@ apikey = os.environ.get('ROAD_API_KEY', '')
 
 if __name__ == '__main__':
     # Register a login
-    reg_login(apikey, 's1311631', 'TODO: Change me', '10.0.0.1')
+    hostname = os.uname().nodename.partition('.')[0]
+    username = os.getlogin()
+    reg_login(apikey, username, hostname, '127.0.0.1')
 
