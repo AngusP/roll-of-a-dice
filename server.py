@@ -36,8 +36,9 @@ class ServerUtils(object):
         '''
         Common between login and logout
         '''
+        name = name.replace(':', '')
         time_s = time_fmt.format(time)
-        self.r.zadd(self.log_k, time, name + time_s)
+        self.r.zadd(self.log_k, time, '{}:{}'.format(name, time_s))
         self.r.lpush(name, time_s)
 
 

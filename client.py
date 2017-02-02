@@ -9,13 +9,18 @@
 import os
 import requests
 
-if __name__ == '__main__':
-    # Register a login
+def reg_login(authkey, user, machine, addr):
     data = {
-        'user'    : 's1311631',
-        'machine' : 'TODO: Change me',
-        'address' : '10.0.0.1',
-        'authkey' : os.environ.get('ROAD_API_KEY', '')
+        'user'    : user,
+        'machine' : machine,
+        'address' : addr,
+        'authkey' : authkey
     }
     response = requests.post('http://localhost:5000/hello', data)
+
+apikey = os.environ.get('ROAD_API_KEY', '')
+
+if __name__ == '__main__':
+    # Register a login
+    reg_login(apikey, 's1311631', 'TODO: Change me', '10.0.0.1')
 
