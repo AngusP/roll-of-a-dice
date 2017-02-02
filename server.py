@@ -18,26 +18,51 @@ class ServerUtils(object):
     def __init__(self):
         self.r = redis.StrictRedis(decode_responses=True)
         self.keys_key = '__api_keys'
-        self.login_k = 'logins'
+        self.log_k = '__log'
 
     def login(self, name, time):
         '''
         Log a login
         '''
-        self.r.zadd(self.login_k, int(time), name)
+        self._log(name, 'in{}', int(time))
 
-    def get_logins(self, time_start=0, time_end=-1):
+    def logout(self, name, time):
         '''
-        Return a range of logins
+        Log a logout
         '''
-        return self.zrange(self.login_k, time_start, time_end, withscores=True)
+        self._log(name, 'out{}', int(time))
+
+    def _log(self, name, time_fmt, time):
+        '''
+        Common between login and logout
+        '''
+        time_s = time_fmt.format(time)
+        self.r.zadd(self.log_k, time, name + time_s)
+        self.r.lpush(name, time_s)
+
+
+    def get_activity(self, time_start=0, time_end=-1):
+        '''
+        Return a range of log entries (raw)
+        '''
+        return [(x.strip(str(int(y))), str(int(y))) for x,y in \
+                self.r.zrange(self.log_k, time_start, time_end, withscores=True)]
+
+
+    def iter_activity(self):
+        '''
+        Iterate over log with Redis' SCAN guarantees but cleaner data
+        '''
+        for name, stamp in self.r.zscan_iter(self.log_k, score_fast_func=int):
+            yield name.strip(str(stamp)), stamp
 
 
     def gen_key(self):
         '''
         Generate and return an API key
         '''
-        rand = ''.join( [chr(random.randint(33,126)) for i in range(0,32)] )
+        rand = ''.join( [chr(random.randint(48,122)) for i in range(0,32)] )
+        rand.replace('\\', '_') # remove pesky escapes
         self._add_key(rand)
         return rand
 
@@ -61,14 +86,14 @@ class ServerUtils(object):
         '''
         List API keys. Score is 'last used' timestamp
         '''
-        return self.zrange(self.keys_key, 0, -1)
+        return self.r.zrange(self.keys_key, 0, -1)
 
 
 
 api = Flask(__name__)
 utils = ServerUtils()
 
-@api.route("/hello", methods=['POST'])
+@api.route('/hello', methods=['POST'])
 def hello():
     '''
     Register login on a machine, echo back to user.
@@ -95,7 +120,7 @@ def hello():
     
     if not utils.validate_key(key):
         return json.dumps({
-            'error' : 'Not Authorised',
+            'error' : 'Not Authorised, bad key {}'.format(key),
             'code'  : 401
         }), 401
 
@@ -108,9 +133,20 @@ def hello():
         'machine' : machine,
         'time'    : time,
         'address' : address,
-        'user'    : user
+        'user'    : user,
+        'code'    : 200
     })
 
+@api.route('/activity')
+def activity():
+    try:
+        key     = request.args['authkey']
+    except KeyError:
+        return json.dumps({
+            'error' : 'Missing GET data',
+            'code'  : 400
+        }), 400
+    return json.dumps(utils.get_activity())
 
 
 if __name__ == '__main__' and 'debug' not in sys.argv:
