@@ -152,6 +152,9 @@ def activity():
 
 
 if __name__ == '__main__':
-    if 'debug' not in sys.argv:
+    if 'develop' not in sys.argv:
+        api.run(host='0.0.0.0', port='80')
+    elif 'interactive' not in sys.argv:
         api.run(host='0.0.0.0', port='5000')
+        
 
