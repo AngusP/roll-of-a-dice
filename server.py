@@ -151,6 +151,7 @@ def activity():
     return json.dumps(utils.get_activity())
 
 
-if __name__ == '__main__' and 'debug' not in sys.argv:
-    api.run()
+if __name__ == '__main__':
+    if 'debug' not in sys.argv:
+        api.run(host='0.0.0.0', port='5000')
 
