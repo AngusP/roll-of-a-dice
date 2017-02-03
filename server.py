@@ -108,7 +108,7 @@ def hello():
     machine  --  Human readable name of machine
     address  --  IP Address of machine (not validated)
     '''
-    _log_event(request, 'login')
+    return _log_event(request, 'login')
 
 
 @api.route('/bye', methods=['POST'])
@@ -124,11 +124,11 @@ def bye():
     machine  --  Human readable name of machine
     address  --  IP Address of machine (not validated)
     '''
-    _log_event(request, 'logout')
+    return _log_event(request, 'logout')
 
 
 
-def _log_event(request, event_type)
+def _log_event(request, event_type):
     try:
         time    = int(unix_time())
         key     = request.form['authkey']
