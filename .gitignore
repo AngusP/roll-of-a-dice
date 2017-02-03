@@ -1,4 +1,5 @@
 VENV
+api_key.conf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
