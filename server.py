@@ -108,6 +108,27 @@ def hello():
     machine  --  Human readable name of machine
     address  --  IP Address of machine (not validated)
     '''
+    _log_event(request, 'login')
+
+
+@api.route('/bye', methods=['POST'])
+def bye():
+    '''
+    Register logout on a machine, echo back to user.
+    
+    Post:
+    -----
+
+    user     --  Username on machine
+    authkey  --  Authorised API key
+    machine  --  Human readable name of machine
+    address  --  IP Address of machine (not validated)
+    '''
+    _log_event(request, 'logout')
+
+
+
+def _log_event(request, event_type)
     try:
         time    = int(unix_time())
         key     = request.form['authkey']
@@ -126,8 +147,11 @@ def hello():
             'code'  : 401
         }), 401
 
-    # Record login
-    utils.login(machine, time)
+    if event_type == 'login':
+        utils.login(machine, time)
+    elif event_type == 'logout':
+        utils.logout(machine, time)
+        
 
     # TODO: Do something with user and address data
 
@@ -138,6 +162,7 @@ def hello():
         'user'    : user,
         'code'    : 200
     })
+
 
 @api.route('/activity')
 def activity():
