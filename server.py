@@ -16,7 +16,8 @@ from time import time as unix_time
 class ServerUtils(object):
 
     def __init__(self):
-        self.r = redis.StrictRedis(decode_responses=True)
+        self.r = redis.StrictRedis(decode_responses=True, 
+                                   unix_socket_path='/tmp/roll-of-a-dice-redis.sock')
         self.keys_key = '__api_keys'
         self.log_k = '__log'
 
@@ -151,5 +152,5 @@ def activity():
 
 
 if __name__ == '__main__' and 'debug' not in sys.argv:
-        api.run()
+    api.run()
 
