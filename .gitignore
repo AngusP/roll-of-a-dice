@@ -1,5 +1,8 @@
 VENV
 api_key.conf
+dump.rdb
+logs
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
