@@ -27,6 +27,7 @@ def reg_login(authkey, user, machine, addr):
         'address' : addr,
         'authkey' : authkey
     }
+    print(data)
     response = requests.post(baseurl + '/hello', data)
     response.raise_for_status()
 
@@ -38,6 +39,7 @@ def reg_logout(authkey, user, machine, addr):
         'address' : addr,
         'authkey' : authkey
     }
+    print(data)
     response = requests.post(baseurl + '/bye', data)
     response.raise_for_status()
 

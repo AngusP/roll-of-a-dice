@@ -173,6 +173,13 @@ def activity():
             'error' : 'Missing GET data',
             'code'  : 400
         }), 400
+
+    if not utils.validate_key(key):
+        return json.dumps({
+            'error' : 'Not Authorised, bad key {}'.format(key),
+            'code'  : 401
+        }), 401
+
     return json.dumps(utils.get_activity())
 
 
