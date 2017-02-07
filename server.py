@@ -10,8 +10,10 @@ import redis
 import json
 import random
 import sys
+import datetime
 from flask import Flask, request
 from time import time as unix_time
+from tabulate import tabulate
 
 class ServerUtils(object):
 
@@ -43,11 +45,18 @@ class ServerUtils(object):
         self.r.lpush(name, time_s)
 
 
-    def get_activity(self, time_start=0, time_end=-1):
+    def get_activity(self, time_start=0, time_end=-1, parse=False):
         '''
         Return a range of log entries (raw)
         '''
-        return [(x.strip(str(int(y))), str(int(y))) for x,y in \
+        def time_parse(t):
+            if parse:
+                return datetime.datetime.fromtimestamp(
+                    int(t)
+                ).strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                return str(int(t))
+        return [(x.strip(str(int(y))), time_parse(y)) for x,y in \
                 self.r.zrange(self.log_k, time_start, time_end, withscores=True)]
 
 
@@ -180,7 +189,8 @@ def activity():
             'code'  : 401
         }), 401
 
-    return json.dumps(utils.get_activity())
+    activity = utils.get_activity(parse=True)
+    return '<pre>' + tabulate(activity, ['Machine', 'Timestamp'], tablefmt='fancy_grid') + '</pre>'
 
 
 if __name__ == '__main__':

@@ -1,8 +1,24 @@
+appdirs==1.4.0
 click==6.7
+decorator==4.0.11
 Flask==0.12
+ipython==5.2.1
+ipython-genutils==0.1.0
 itsdangerous==0.24
 Jinja2==2.9.5
 MarkupSafe==0.23
+packaging==16.8
+pexpect==4.2.1
+pickleshare==0.7.4
+prompt-toolkit==1.0.10
+ptyprocess==0.5.1
+Pygments==2.2.0
+pyparsing==2.1.10
 redis==2.10.5
-requests==2.13.0
+-e git://github.com/kennethreitz/requests.git@f4a3aa42b6ce984b1e1056e03fb66a2dc48cc769#egg=requests&subdirectory=../../requests
+simplegeneric==0.8.1
+six==1.10.0
+tabulate==0.7.7
+traitlets==4.3.1
+wcwidth==0.1.7
 Werkzeug==0.11.15
